@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="page-title"><i class="fas fa-file-invoice-dollar me-2"></i>Fines</h3>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card p-4" style="border-left: 5px solid #ff4757 !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="color:#888; font-size:0.85rem;">Pending Fines</div>
+                    <div style="font-size:2rem; font-weight:700; color:#ff4757;">
+                        {{ fines | selectattr('status', 'equalto', 'Pending') | list | length }}
+                    </div>
+                </div>
+                <i class="fas fa-clock fa-2x" style="color:#ff4757;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4" style="border-left: 5px solid #2ed573 !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="color:#888; font-size:0.85rem;">Paid Fines</div>
+                    <div style="font-size:2rem; font-weight:700; color:#2ed573;">
+                        {{ fines | selectattr('status', 'equalto', 'Paid') | list | length }}
+                    </div>
+                </div>
+                <i class="fas fa-check-circle fa-2x" style="color:#2ed573;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fines Table -->
+<div class="card p-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;">
+        <i class="fas fa-list me-2"></i>All Fines
+    </h5>
+    <table class="table table-hover rounded overflow-hidden">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Plate Number</th>
+                <th>Violation</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Fine Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in fines %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><strong style="color:#00d4ff;">{{ f.plate_number }}</strong></td>
+                <td>{{ f.violation_type }}</td>
+                <td>{{ f.location }}</td>
+                <td>{{ f.date.strftime('%d-%m-%Y') }}</td>
+                <td><strong>Rs. {{ f.fine_amount }}</strong></td>
+                <td>
+                    {% if f.status == "Pending" %}
+                    <span class="badge badge-pending">Pending</span>
+                    {% else %}
+                    <span class="badge badge-paid">Paid</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if f.status == "Pending" %}
+                    <a href="/fines/pay/{{ f._id }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-check me-1"></i>Mark Paid
+                    </a>
+                    {% else %}
+                    <span class="text-muted" style="font-size:0.85rem;">
+                        <i class="fas fa-check-circle me-1"></i>Paid
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="text-center text-muted py-4">No fines recorded yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="page-title"><i class="fas fa-exclamation-triangle me-2"></i>Violations</h3>
+
+<!-- Add Violation Form -->
+<div class="card p-4 mb-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;"><i class="fas fa-plus-circle me-2"></i>Add New Violation</h5>
+    <form action="/violations/add" method="POST">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Plate Number</label>
+                <select name="plate_number" class="form-select" required>
+                    <option value="">Select Vehicle</option>
+                    {% for v in vehicles %}
+                    <option value="{{ v.plate_number }}">{{ v.plate_number }} — {{ v.owner_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Violation Type</label>
+                <select name="violation_type" class="form-select" required>
+                    {% for type, fine in fine_chart.items() %}
+                    <option value="{{ type }}">{{ type }} — Rs. {{ fine }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Location</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Shahra-e-Faisal" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 px-4">
+            <i class="fas fa-plus me-2"></i>Add Violation
+        </button>
+    </form>
+</div>
+
+<!-- Violations Table -->
+<div class="card p-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;">
+        <i class="fas fa-list me-2"></i>All Violations
+        <span class="badge" style="background:#ff6b6b; color:white; font-size:0.8rem; margin-left:10px;">{{ violations|length }} Total</span>
+    </h5>
+    <table class="table table-hover rounded overflow-hidden">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Plate Number</th>
+                <th>Owner</th>
+                <th>Violation</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Fine</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in violations %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><strong style="color:#00d4ff;">{{ v.plate_number }}</strong></td>
+                <td>
+                    {% if v.vehicle_info %}
+                        {{ v.vehicle_info[0].owner_name }}
+                    {% else %}
+                        <span class="text-muted">Unknown</span>
+                    {% endif %}
+                </td>
+                <td>{{ v.violation_type }}</td>
+                <td>{{ v.location }}</td>
+                <td>{{ v.date.strftime('%d-%m-%Y') }}</td>
+                <td><strong>Rs. {{ v.fine_amount }}</strong></td>
+                <td>
+                    {% if v.status == "Pending" %}
+                    <span class="badge badge-pending">Pending</span>
+                    {% else %}
+                    <span class="badge badge-paid">Paid</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/violations/delete/{{ v._id }}"
+                       onclick="return confirm('Delete this violation?')"
+                       class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="9" class="text-center text-muted py-4">No violations recorded yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

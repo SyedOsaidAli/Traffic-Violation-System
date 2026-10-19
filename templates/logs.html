@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="page-title"><i class="fas fa-history me-2"></i>Trigger Logs</h3>
+
+<div class="card p-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;">
+        <i class="fas fa-database me-2"></i>Auto Generated Logs
+        <span class="badge" style="background:#1a1a2e; color:#00d4ff; font-size:0.8rem; margin-left:10px;">Last 50 Events</span>
+    </h5>
+    <table class="table table-hover rounded overflow-hidden">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Action</th>
+                <th>Plate Number</th>
+                <th>Violation Type</th>
+                <th>Fine Amount</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                    {% if log.action == "INSERT" %}
+                    <span class="badge bg-primary">INSERT</span>
+                    {% elif log.action == "DELETE" %}
+                    <span class="badge bg-danger">DELETE</span>
+                    {% elif log.action == "UPDATE-PAID" %}
+                    <span class="badge bg-success">UPDATE</span>
+                    {% endif %}
+                </td>
+                <td><strong style="color:#00d4ff;">{{ log.plate_number }}</strong></td>
+                <td>{{ log.violation_type or '—' }}</td>
+                <td>{% if log.fine_amount %}Rs. {{ log.fine_amount }}{% else %}—{% endif %}</td>
+                <td>{{ log.timestamp.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No logs yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

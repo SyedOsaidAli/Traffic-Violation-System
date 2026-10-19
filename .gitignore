@@ -1,0 +1,23 @@
+# Secrets and passwords
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

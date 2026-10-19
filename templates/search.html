@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="page-title"><i class="fas fa-search me-2"></i>Search Vehicle</h3>
+
+<!-- Search Form -->
+<div class="card p-4 mb-4">
+    <form action="/search" method="GET">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label fw-bold">Enter Plate Number</label>
+                <input type="text" name="q" class="form-control form-control-lg"
+                       placeholder="e.g. ABC-123"
+                       value="{{ query }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Vehicle Info (JOIN result) -->
+{% if query %}
+    {% if vehicle_info %}
+    <div class="card p-4 mb-4" style="border-left: 5px solid #00d4ff !important;">
+        <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:15px;">
+            <i class="fas fa-car me-2"></i>Vehicle Information
+        </h5>
+        <div class="row">
+            <div class="col-md-4">
+                <span style="color:#888;">Plate Number</span>
+                <div style="font-size:1.3rem; font-weight:700; color:#00d4ff;">{{ vehicle_info.plate_number }}</div>
+            </div>
+            <div class="col-md-4">
+                <span style="color:#888;">Owner Name</span>
+                <div style="font-size:1.1rem; font-weight:600;">{{ vehicle_info.owner_name }}</div>
+            </div>
+            <div class="col-md-4">
+                <span style="color:#888;">Contact</span>
+                <div style="font-size:1.1rem; font-weight:600;">{{ vehicle_info.contact }}</div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>No vehicle found with plate number <strong>{{ query }}</strong>
+    </div>
+    {% endif %}
+
+    <!-- Violations Results -->
+    <div class="card p-4">
+        <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;">
+            <i class="fas fa-list me-2"></i>Violation History
+            <span class="badge" style="background:#ff6b6b; color:white; font-size:0.8rem; margin-left:10px;">{{ results|length }} Found</span>
+        </h5>
+        <table class="table table-hover rounded overflow-hidden">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Violation</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Fine</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ r.violation_type }}</td>
+                    <td>{{ r.location }}</td>
+                    <td>{{ r.date.strftime('%d-%m-%Y') }}</td>
+                    <td><strong>Rs. {{ r.fine_amount }}</strong></td>
+                    <td>
+                        {% if r.status == "Pending" %}
+                        <span class="badge badge-pending">Pending</span>
+                        {% else %}
+                        <span class="badge badge-paid">Paid</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No violations found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+{% endblock %}

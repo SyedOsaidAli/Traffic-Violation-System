@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="page-title"><i class="fas fa-car me-2"></i>Vehicles</h3>
+
+<!-- Add Vehicle Form -->
+<div class="card p-4 mb-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;"><i class="fas fa-plus-circle me-2"></i>Register New Vehicle</h5>
+    <form action="/vehicles/add" method="POST">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Plate Number</label>
+                <input type="text" name="plate_number" class="form-control" placeholder="e.g. ABC-123" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Owner Name</label>
+                <input type="text" name="owner_name" class="form-control" placeholder="Full name" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Contact Number</label>
+                <input type="text" name="contact" class="form-control" placeholder="03XX-XXXXXXX" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 px-4">
+            <i class="fas fa-plus me-2"></i>Register Vehicle
+        </button>
+    </form>
+</div>
+
+<!-- Vehicles Table -->
+<div class="card p-4">
+    <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:20px;">
+        <i class="fas fa-list me-2"></i>Registered Vehicles
+        <span class="badge" style="background:#00d4ff; color:#1a1a2e; font-size:0.8rem; margin-left:10px;">{{ vehicles|length }} Total</span>
+    </h5>
+    <table class="table table-hover rounded overflow-hidden">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Plate Number</th>
+                <th>Owner Name</th>
+                <th>Contact</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vehicles %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><strong style="color:#00d4ff;">{{ v.plate_number }}</strong></td>
+                <td>{{ v.owner_name }}</td>
+                <td>{{ v.contact }}</td>
+                <td>
+                    <a href="/vehicles/delete/{{ v._id }}" 
+                       onclick="return confirm('Delete this vehicle?')"
+                       class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No vehicles registered yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
